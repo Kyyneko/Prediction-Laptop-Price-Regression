@@ -92,37 +92,58 @@ _(Untuk visualisasi detail, lihat Gambar 1 dan 2 di bagian Lampiran)_
 
 ## Data Preparation
 
-1.  **Pembersihan Data Awal:**
+1. Pembersihan Data Awal
 
-    - Menghapus kolom yang tidak relevan seperti 'Unnamed: 0.1' dan 'Unnamed: 0' yang merupakan artefak dari penyimpanan data.
-    - Memeriksa dan menangani data duplikat (ditemukan 0 duplikat).
-    - Memeriksa _missing values_; tidak ada _missing values_ signifikan yang ditemukan pada fitur-fitur yang relevan untuk pemodelan.
+- Menghapus kolom yang tidak relevan seperti 'Unnamed: 0.1' dan 'Unnamed: 0' yang merupakan artefak dari penyimpanan data.
+- Memeriksa dan menangani data duplikat (ditemukan 0 duplikat).
+- Memeriksa _missing values_; tidak ada _missing values_ yang ditemukan pada dataset yang digunakan.
 
-2.  **Feature Engineering:**
-    Membuat fitur baru dari fitur yang sudah ada untuk meningkatkan representasi data dan potensi performa model:
+2. Feature Engineering
 
-    - `ram_size`: Mengekstrak nilai numerik ukuran RAM (dalam GB) dari kolom 'Ram' yang berformat teks. Nilai default (misalnya 8GB) diberikan jika ekstraksi gagal.
-    - `rom_size`: Mengekstrak nilai numerik ukuran ROM (dalam GB) dari kolom 'ROM' yang berformat teks, dengan konversi dari TB ke GB jika perlu. Nilai default (misalnya 256GB) diberikan jika ekstraksi gagal.
-    - `total_pixels`: Menghitung total piksel layar dari `resolution_width` dan `resolution_height` (`resolution_width * resolution_height`). Nilai default (misalnya 1920x1080) digunakan jika kolom resolusi tidak lengkap.
-    - `price_per_spec`: Menghitung rasio harga terhadap `spec_rating`. Fitur ini dibuat untuk analisis eksploratif namun **tidak digunakan** sebagai fitur input dalam pemodelan akhir untuk menghindari _data leakage_ atau korelasi yang terlalu sempurna dengan target.
-    - `price_category`: Mengkategorikan laptop berdasarkan rentang harga (Budget, Mid-range, High-end, Premium). Fitur ini utamanya digunakan untuk stratifikasi saat pembagian data. _Observasi: Ambang batas fungsi `categorize_price` dalam kode menghasilkan semua laptop dalam dataset terkategorikan 'Premium', menandakan skala harga aktual mungkin berbeda dari asumsi awal fungsi atau perlu penyesuaian ambang batas._
+Membuat fitur baru dari fitur yang sudah ada untuk meningkatkan representasi data dan potensi performa model:
 
-3.  **Seleksi Fitur:** Memilih fitur-fitur yang akan digunakan untuk pemodelan, yaitu `brand`, `processor`, `Ram_type`, `ROM_type`, `GPU`, `OS` (kategorikal) dan `spec_rating`, `display_size`, `ram_size`, `rom_size`, `resolution_width`, `resolution_height`, `warranty` (numerik).
-4.  **Penanganan Missing Values pada Fitur Terpilih (X):**
-    - Fitur numerik: Mengisi nilai yang hilang dengan median dari kolom tersebut.
-    - Fitur kategorikal: Mengisi nilai yang hilang dengan modus dari kolom tersebut atau konstanta 'Unknown'.
-5.  **Pembagian Data:** Membagi dataset menjadi data latih (80%) dan data uji (20%) menggunakan `train_test_split` (`random_state=42`). Stratifikasi berdasarkan `price_category` (jika valid) dilakukan untuk memastikan distribusi harga yang representatif di kedua set.
-6.  **Preprocessing Fitur (menggunakan `ColumnTransformer` dalam `Pipeline`):**
-    - **One-Hot Encoding:** Menerapkan pada fitur kategorikal untuk mengubahnya menjadi format numerik yang dapat diproses model, dengan `drop='first'` untuk menghindari multikolinieritas dan `handle_unknown='ignore'` untuk menangani kategori baru pada data uji.
-    - **Standard Scaling:** Menerapkan `StandardScaler` pada fitur numerik untuk menstandarisasi skala fitur (mean 0, standar deviasi 1), penting untuk algoritma yang sensitif terhadap skala.
+- **`ram_size`**: Mengekstrak nilai numerik ukuran RAM (dalam GB) dari kolom 'Ram' yang berformat teks menggunakan regex. Nilai default 8GB diberikan jika ekstraksi gagal atau kolom tidak tersedia.
+- **`rom_size`**: Mengekstrak nilai numerik ukuran ROM (dalam GB) dari kolom 'ROM' yang berformat teks, dengan konversi otomatis dari TB ke GB jika diperlukan. Nilai default 256GB diberikan jika ekstraksi gagal atau kolom tidak tersedia.
+- **`total_pixels`**: Menghitung total piksel layar dari `resolution_width` dan `resolution_height` (`resolution_width * resolution_height`). Nilai default Full HD (1920x1080 = 2,073,600 piksel) digunakan jika kolom resolusi tidak tersedia.
+- **`price_per_spec`**: Menghitung rasio harga terhadap `spec_rating`. Fitur ini dibuat untuk analisis eksploratif namun **tidak digunakan** sebagai fitur input dalam pemodelan akhir untuk menghindari _data leakage_.
+- **`price_category`**: Mengkategorikan laptop berdasarkan rentang harga (Budget: <$500, Mid-range: $500-$999, High-end: $1000-$1999, Premium: ≥$2000). Fitur ini digunakan untuk stratifikasi saat pembagian data.
 
-**Alasan dilakukannya Data Preparation:**
+3. Seleksi Fitur
 
-- Memastikan data bersih dari error, inkonsistensi, dan informasi yang tidak relevan.
-- Mengubah data ke dalam format numerik yang sesuai untuk input sebagian besar algoritma machine learning.
-- Potensi untuk meningkatkan informasi yang dapat diekstrak oleh model melalui pembuatan fitur baru yang lebih informatif.
-- Menstandarisasi skala fitur untuk meningkatkan stabilitas dan konvergensi beberapa algoritma.
-- Membagi data secara proporsional untuk pelatihan dan evaluasi yang objektif.
+Memilih fitur-fitur yang akan digunakan untuk pemodelan berdasarkan ketersediaan di dataset:
+
+- **Fitur Numerik**: `spec_rating`, `display_size`, `warranty`, `ram_size`, `rom_size`, dan jika tersedia: `resolution_width`, `resolution_height`
+- **Fitur Kategorikal**: Dipilih dari `brand`, `processor`, `Ram_type`, `ROM_type`, `GPU`, `OS` (hanya yang tersedia di dataset yang digunakan)
+
+4. Pembagian Data
+
+Membagi dataset menjadi data latih (80%) dan data uji (20%) menggunakan `train_test_split` dengan `random_state=42`. Stratifikasi berdasarkan `price_category` dilakukan untuk memastikan distribusi harga yang representatif di kedua set.
+
+5. Preprocessing Fitur
+
+Menggunakan `ColumnTransformer` dalam `Pipeline`:
+
+- **Standard Scaling**: Menerapkan `StandardScaler` pada semua fitur numerik untuk menstandarisasi skala (mean=0, std=1), penting untuk algoritma yang sensitif terhadap skala seperti Linear Regression dan algoritma berbasis jarak.
+- **One-Hot Encoding**: Menerapkan pada semua fitur kategorikal untuk mengubahnya menjadi format numerik yang dapat diproses model, dengan parameter:
+  - `drop='first'`: Menghindari multikolinieritas dengan menghapus satu kolom dummy
+  - `handle_unknown='ignore'`: Menangani kategori baru yang mungkin muncul pada data uji
+
+**Catatan Penting tentang Missing Values**
+
+Setelah tahap pembersihan data awal dan feature engineering, semua fitur yang dipilih untuk pemodelan (baik numerik maupun kategorikal) tidak memiliki missing values. Hal ini karena:
+
+- Dataset asli tidak memiliki missing values pada kolom-kolom kunci
+- Fitur baru hasil feature engineering dibuat dengan nilai default yang sudah ditentukan
+- Oleh karena itu, **tidak diperlukan langkah imputasi missing values** pada tahap preprocessing
+
+**Alasan dilakukannya Data Preparation**
+
+- Memastikan data bersih dari error, inkonsistensi, dan informasi yang tidak relevan
+- Menciptakan fitur baru yang lebih informatif melalui ekstraksi dan transformasi data
+- Mengubah data ke dalam format numerik yang sesuai untuk input algoritma machine learning
+- Menstandarisasi skala fitur untuk meningkatkan stabilitas dan konvergensi algoritma
+- Membagi data secara proporsional dan stratified untuk pelatihan dan evaluasi yang objektif
+- Memastikan pipeline preprocessing dapat menangani data baru dengan konsisten
 
 ## Modeling
 
@@ -151,8 +172,8 @@ Proses pemodelan melibatkan pelatihan dan evaluasi enam algoritma regresi yang b
 Setelah pelatihan, evaluasi pada data uji, dan perbandingan menggunakan cross-validation, **Ridge Regression** menunjukkan performa terbaik secara keseluruhan dari keenam model yang diuji:
 
 - **Test R² (R-squared): 0.815**
-- **Test RMSE (Root Mean Squared Error): 26,166** (dalam satuan mata uang target)
-- **Test MAE (Mean Absolute Error): 15,280** (dalam satuan mata uang target)
+- **Test RMSE (Root Mean Squared Error): 26,161** (dalam satuan mata uang target)
+- **Test MAE (Mean Absolute Error): 15,269** (dalam satuan mata uang target)
 
 _(Untuk perbandingan performa semua model, lihat Gambar 3 di bagian Lampiran)_
 
@@ -162,8 +183,8 @@ _(Untuk perbandingan performa semua model, lihat Gambar 3 di bagian Lampiran)_
 Kinerja model regresi dievaluasi menggunakan metrik standar berikut pada data uji:
 
 - **R² (Coefficient of Determination):** Mengukur seberapa baik model menjelaskan variabilitas dalam data harga laptop. Nilai R² 0.815 berarti sekitar 81.5% variasi harga laptop dapat dijelaskan oleh fitur-fitur dalam model Ridge Regression.
-- **RMSE (Root Mean Squared Error):** Merupakan akar dari rata-rata kuadrat kesalahan. RMSE sebesar 26,166 berarti, rata-rata, prediksi model memiliki kesalahan sekitar $26,166 (jika satuan adalah $) dari harga aktual. Memberikan bobot lebih pada kesalahan besar.
-- **MAE (Mean Absolute Error):** Adalah rata-rata dari nilai absolut kesalahan. MAE sebesar 15,280 berarti, rata-rata, prediksi model menyimpang sebesar $15,280 dari harga aktual, tanpa memperhatikan arah kesalahan. Kurang sensitif terhadap outlier dibandingkan RMSE.
+- **RMSE (Root Mean Squared Error):** Merupakan akar dari rata-rata kuadrat kesalahan. RMSE sebesar 26,166 berarti, rata-rata, prediksi model memiliki kesalahan sekitar $26,161 (jika satuan adalah $) dari harga aktual. Memberikan bobot lebih pada kesalahan besar.
+- **MAE (Mean Absolute Error):** Adalah rata-rata dari nilai absolut kesalahan. MAE sebesar 15,280 berarti, rata-rata, prediksi model menyimpang sebesar $15,269 dari harga aktual, tanpa memperhatikan arah kesalahan. Kurang sensitif terhadap outlier dibandingkan RMSE.
 
 **Hasil Evaluasi Model-Model dan Pemilihan Model Terbaik:**
 Semua enam model (Linear Regression, Ridge Regression, Lasso Regression, Decision Tree Regressor, Random Forest Regressor, dan Gradient Boosting Regressor) dilatih dan dievaluasi. Hasil metrik (Test R², Test RMSE, Test MAE, dan CV R² Mean) untuk setiap model dicatat dan dibandingkan (dirangkum dalam Tabel Hasil atau Gambar 3 di Lampiran).
