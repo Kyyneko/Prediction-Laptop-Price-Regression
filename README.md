@@ -12,9 +12,9 @@ Laptop merupakan perangkat penting dalam mendukung produktivitas manusia di era 
 
 **Referensi:**
 
-- _Sebagai contoh, Anda bisa mencari artikel atau laporan pasar terbaru:_ "Mordor Intelligence (2024). _Laptop Market Size & Share Analysis - Growth Trends & Forecasts (2024 - 2029)_." atau sumber data konkret yang Anda gunakan.
-- A. Géron, _Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow_, O'Reilly, 2019.
-- Dokumentasi Scikit-learn: https://scikit-learn.org
+- Mordor Intelligence, Laptop Market Size & Share Analysis - Growth Trends & Forecasts (2024 - 2029), 2024. [Online]. Available: https://www.mordorintelligence.com
+- A. Géron, Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow, 2nd ed. Sebastopol, CA, USA: O'Reilly Media, 2019.
+- Scikit-learn, “Scikit-learn: Machine Learning in Python.” [Online]. Available: https://scikit-learn.org
 
 ## Business Understanding
 
