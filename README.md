@@ -41,7 +41,7 @@ Dataset yang digunakan adalah `laptop_price_dataset.csv`, berisi kumpulan inform
 **Tautan Sumber Data:** Dataset diperoleh dari file lokal `laptop_price_dataset.csv`. (Jika dari sumber publik seperti Kaggle, sebutkan di sini).
 
 **Jumlah Data Awal:**
-Dataset awal terdiri dari **893 baris** (observasi laptop) dan **17 kolom** (fitur termasuk target).
+Dataset awal terdiri dari **893 baris** (observasi laptop) dan **18 kolom** (fitur termasuk target).
 
 **Kondisi Data Awal:**
 
@@ -183,15 +183,15 @@ _(Untuk perbandingan performa semua model, lihat Gambar 3 di bagian Lampiran)_
 Kinerja model regresi dievaluasi menggunakan metrik standar berikut pada data uji:
 
 - **R² (Coefficient of Determination):** Mengukur seberapa baik model menjelaskan variabilitas dalam data harga laptop. Nilai R² 0.815 berarti sekitar 81.5% variasi harga laptop dapat dijelaskan oleh fitur-fitur dalam model Ridge Regression.
-- **RMSE (Root Mean Squared Error):** Merupakan akar dari rata-rata kuadrat kesalahan. RMSE sebesar 26,166 berarti, rata-rata, prediksi model memiliki kesalahan sekitar $26,161 (jika satuan adalah $) dari harga aktual. Memberikan bobot lebih pada kesalahan besar.
-- **MAE (Mean Absolute Error):** Adalah rata-rata dari nilai absolut kesalahan. MAE sebesar 15,280 berarti, rata-rata, prediksi model menyimpang sebesar $15,269 dari harga aktual, tanpa memperhatikan arah kesalahan. Kurang sensitif terhadap outlier dibandingkan RMSE.
+- **RMSE (Root Mean Squared Error):** Merupakan akar dari rata-rata kuadrat kesalahan. RMSE sebesar 26,161 berarti, rata-rata, prediksi model memiliki kesalahan sekitar $26,161 (jika satuan adalah $) dari harga aktual. Memberikan bobot lebih pada kesalahan besar.
+- **MAE (Mean Absolute Error):** Adalah rata-rata dari nilai absolut kesalahan. MAE sebesar 15,269 berarti, rata-rata, prediksi model menyimpang sebesar $15,269 dari harga aktual, tanpa memperhatikan arah kesalahan. Kurang sensitif terhadap outlier dibandingkan RMSE.
 
 **Hasil Evaluasi Model-Model dan Pemilihan Model Terbaik:**
 Semua enam model (Linear Regression, Ridge Regression, Lasso Regression, Decision Tree Regressor, Random Forest Regressor, dan Gradient Boosting Regressor) dilatih dan dievaluasi. Hasil metrik (Test R², Test RMSE, Test MAE, dan CV R² Mean) untuk setiap model dicatat dan dibandingkan (dirangkum dalam Tabel Hasil atau Gambar 3 di Lampiran).
 
 Berdasarkan perbandingan komprehensif:
 
-- **Ridge Regression** terpilih sebagai model terbaik dengan skor **Test R² = 0.815**, **Test RMSE = $26,166**, dan **Test MAE = $15,280**.
+- **Ridge Regression** terpilih sebagai model terbaik dengan skor **Test R² = 0.815**, **Test RMSE = $26,161**, dan **Test MAE = $1569**.
 - Model ini juga menunjukkan stabilitas yang baik melalui **validasi silang 5-fold** pada data latih, dengan skor **CV R² Mean = 0.786** dan standar deviasi yang relatif rendah (**CV R² Std = 0.039**). Performa pada data uji (Test R²) sedikit lebih tinggi daripada CV R² Mean, namun perbedaan ini tidak signifikan dan tidak menunjukkan overfitting yang parah, terutama karena model Ridge dengan regularisasi cenderung lebih general. Random Forest dan Gradient Boosting juga menunjukkan performa yang baik, namun Ridge Regression dipilih karena kombinasi performa yang kuat, stabilitas, dan interpretasi yang relatif lebih sederhana dibandingkan model ensemble yang lebih kompleks.
 
 **Analisis Visual Hasil Model Terbaik (Ridge Regression):**
@@ -215,10 +215,7 @@ Hasil evaluasi model secara langsung menjawab pertanyaan dan tujuan bisnis yang 
 4.  **Mencapai Goal 2 (Identifikasi Algoritma Optimal):**
     Tercapai. Ridge Regression dipilih sebagai algoritma terbaik setelah perbandingan komprehensif.
 
-5.  **Mencapai Goal 3 (Memahami Faktor Signifikan):**
-    Meskipun laporan ini berfokus pada pemilihan model, analisis feature importance dari model tree-based (Random Forest, Gradient Boosting) yang dieksplorasi dalam notebook, atau analisis koefisien dari Ridge Regression (setelah invers transformasi scaling), dapat memberikan wawasan tentang fitur mana (misalnya, `spec_rating`, `ram_size`, `rom_size`, `GPU` tertentu) yang paling berpengaruh terhadap harga. Bagian ini dapat diperdalam pada pengembangan selanjutnya.
-
-6.  **Dampak Solution Statements:**
+5.  **Dampak Solution Statements:**
     - **Pembangunan dan perbandingan beberapa model regresi:** Ini sangat berdampak karena memungkinkan identifikasi Ridge Regression sebagai model terbaik dari beberapa alternatif, daripada hanya mengandalkan satu model.
     - **Evaluasi komprehensif (R², RMSE, MAE):** Memberikan dasar kuantitatif yang kuat untuk menilai dan membandingkan kinerja model, memastikan keputusan pemilihan model berbasis data.
     - **Pemilihan model terbaik berdasarkan performa dan stabilitas (CV):** Memastikan model yang dipilih tidak hanya berkinerja baik pada satu split data uji tetapi juga general dan stabil, mengurangi risiko overfitting.
