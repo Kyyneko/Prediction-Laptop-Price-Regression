@@ -191,7 +191,7 @@ Semua enam model (Linear Regression, Ridge Regression, Lasso Regression, Decisio
 
 Berdasarkan perbandingan komprehensif:
 
-- **Ridge Regression** terpilih sebagai model terbaik dengan skor **Test R² = 0.815**, **Test RMSE = $26,161**, dan **Test MAE = $1569**.
+- **Ridge Regression** terpilih sebagai model terbaik dengan skor **Test R² = 0.815**, **Test RMSE = $26,161**, dan **Test MAE = $15,269**.
 - Model ini juga menunjukkan stabilitas yang baik melalui **validasi silang 5-fold** pada data latih, dengan skor **CV R² Mean = 0.786** dan standar deviasi yang relatif rendah (**CV R² Std = 0.039**). Performa pada data uji (Test R²) sedikit lebih tinggi daripada CV R² Mean, namun perbedaan ini tidak signifikan dan tidak menunjukkan overfitting yang parah, terutama karena model Ridge dengan regularisasi cenderung lebih general. Random Forest dan Gradient Boosting juga menunjukkan performa yang baik, namun Ridge Regression dipilih karena kombinasi performa yang kuat, stabilitas, dan interpretasi yang relatif lebih sederhana dibandingkan model ensemble yang lebih kompleks.
 
 **Analisis Visual Hasil Model Terbaik (Ridge Regression):**
